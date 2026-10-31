@@ -351,7 +351,7 @@ export class MultilayerIjump extends GeneralizedAstarAutorouter {
           dir.dx === forwardDir.dx &&
           dir.dy === forwardDir.dy &&
           dir.dl === forwardDir.dl &&
-          node.parent?.obstacleHit
+          node.obstacleHit
         ) {
           return false
         }
@@ -411,6 +411,7 @@ export class MultilayerIjump extends GeneralizedAstarAutorouter {
           travelDirs3.push({
             ...travelDir,
             travelDistance: 0,
+            obstacle: null,
             enterMarginCost: 0,
             travelMarginCostFactor: 1,
           })
@@ -422,6 +423,7 @@ export class MultilayerIjump extends GeneralizedAstarAutorouter {
           travelDirs3.push({
             ...travelDir,
             travelDistance: 0,
+            obstacle: null,
             enterMarginCost: 0,
             travelMarginCostFactor: 1,
           })
@@ -468,6 +470,7 @@ export class MultilayerIjump extends GeneralizedAstarAutorouter {
         travelDirs3.push({
           ...travelDir,
           travelDistance: goalDistAlongTravelDir - stopShortDistance,
+          obstacle: null,
           enterMarginCost: 0,
           travelMarginCostFactor: 1,
         })
@@ -484,29 +487,10 @@ export class MultilayerIjump extends GeneralizedAstarAutorouter {
             travelDirs3.push({
               ...travelDir,
               travelDistance: overcomeDistance - this.OBSTACLE_MARGIN + margin,
+              obstacle: null,
               enterMarginCost: enterCost,
               travelMarginCostFactor: travelCostFactor,
             })
-          }
-        }
-        if (travelDir.wallDistance === Infinity) {
-          travelDirs3.push({
-            ...travelDir,
-            travelDistance: goalDistAlongTravelDir,
-            enterMarginCost: 0,
-            travelMarginCostFactor: 1,
-          })
-        } else if (travelDir.wallDistance > this.largestMargin) {
-          for (const { margin, enterCost, travelCostFactor } of this
-            .marginsWithCosts) {
-            if (travelDir.wallDistance > this.largestMargin + margin) {
-              travelDirs3.push({
-                ...travelDir,
-                travelDistance: travelDir.wallDistance - margin,
-                enterMarginCost: enterCost,
-                travelMarginCostFactor: travelCostFactor,
-              })
-            }
           }
         }
       } else if (travelDir.wallDistance !== Infinity) {
@@ -516,6 +500,7 @@ export class MultilayerIjump extends GeneralizedAstarAutorouter {
             travelDirs3.push({
               ...travelDir,
               travelDistance: travelDir.wallDistance - margin,
+              obstacle: travelDir.obstacle,
               enterMarginCost: enterCost,
               travelMarginCostFactor: travelCostFactor,
             })
